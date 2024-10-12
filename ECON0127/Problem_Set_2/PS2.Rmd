@@ -83,3 +83,17 @@ mod3 <- lm(assaults17 ~ education_category * fb_hip_hop_music * nyc_dummy,
            data = fcbk)
 
 ```
+
+## Question 3 
+
+````{r}
+mod2a <- lm(assaults17 ~ city, data=fcbk)
+
+mod2b <- lm(assaults17 ~ fb_hip_hop_music, data=fcbk)
+
+mod2c <- lm(assaults17 ~ city * fb_hip_hop_music, data=fcbk)
+
+screenreg(list(mod2a,mod2b,mod2c))
+
+
+```
