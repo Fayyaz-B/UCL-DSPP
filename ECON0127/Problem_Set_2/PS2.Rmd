@@ -1,0 +1,85 @@
+---
+title: "ECON0127 PS2"
+author: "INSERT GROUP NAMES"
+date: "2024-10-10"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+
+fcbk <- read_csv("Week 2 /PS/fcbk.csv") %>% 
+clean_names() %>% 
+type_convert()
+
+# drop discrete variables 
+fcbk_cont <- fcbk %>% 
+  select(-c(1,2,3))
+```
+## Question 1 
+
+```{r}
+#Fit a linear regression model of all the continous variables 
+model_all <- lm(assaults17 ~ ., 
+                data = fcbk_cont)
+r_sq_mod_all <- summary(model_all)$r.squared
+
+```
+
+1a 
+```{r}
+mod1 <- lm(assaults17 ~ fb_hip_hop_music,
+           data=fcbk)
+r_sq_mod1 <-summary(mod1)$r.squared
+```
+
+```{r echo=TRUE}
+print(r_sq_mod_all - r_sq_mod1)
+```
+
+1b
+```{r}
+mean_values <- as.data.frame(lapply(fcbk_cont, mean, na.rm = TRUE))
+
+se <- predict(model_all, newdata=mean_values, se.fit=TRUE)
+
+print(se$se.fit)
+```
+
+## Question 2 
+
+a)
+
+```{r}
+fcbk <- fcbk %>% 
+  mutate(education_category =
+  cut(acs_pop25_college, 
+      breaks = c(-Inf,15,30,Inf),
+      labels = c("low", "medium", "high"),
+      right = TRUE))
+```
+
+b)
+```{r}
+mod2 <- lm(assaults17 ~ education_category * fb_hip_hop_music,
+           data = fcbk)
+
+screenreg(mod2)
+```
+
+```{r}
+fcbk <- fcbk %>% 
+  mutate(nyc_dummy = ifelse(state == "NY",1,0))
+
+mod3 <- lm(assaults17 ~ education_category * fb_hip_hop_music * nyc_dummy,
+           data = fcbk)
+
+```
